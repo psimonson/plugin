@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../../plugin_manager.h"
+#include "plugin_manager.h"
 
 /* Get user input from the keyboard.
  */
@@ -18,9 +18,10 @@ int init_plugin(plugin_manager_t *pm)
 {
 	char buf[64];
 
+	printf("Welcome to %s!\n\n", PluginManager_getName(pm));
 	printf("Please enter your name? ");
 	(void)get_line(buf, sizeof(buf), stdin);
-	printf("Welcome to plugin2!\n\nHello, %s.\n", buf);
+	printf("Hello, %s.\n", buf);
 
 	return 0;
 }

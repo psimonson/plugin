@@ -1,7 +1,8 @@
 # Simple makefile for gcc written by stext editor.
 CC=i686-w64-mingw32-gcc
-CFLAGS=-std=c11 -W -O -g -fPIC -shared
+CFLAGS=-std=c11 -W -O -g -fPIC -shared -I../../libprs/include -I../../src
 LDFLAGS=
+PMLIB=../../pluginmanager.dll
 
 BACKUPS=$(shell find . -iname "*.bak")
 SRCDIR=$(shell basename $(shell pwd))
@@ -20,7 +21,7 @@ all: $(TARGET)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(PMLIB)
 
 clean:
 	rm -f $(OBJECTS) $(TARGET)

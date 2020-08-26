@@ -1,6 +1,6 @@
 # Simple makefile for gcc written by stext editor.
 CC=gcc
-CFLAGS=-std=c11 -W -O -g -fPIC -shared
+CFLAGS=-std=c11 -W -O -g -fPIC -shared -I../../libprs/include -I../../src
 LDFLAGS=
 
 BACKUPS=$(shell find . -iname "*.bak")

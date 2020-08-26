@@ -3,10 +3,10 @@
 
 int main(void)
 {
-	PluginManager_Init("plugins");
-	PluginManager_Print();
-	PluginManager_Exec(0);
-	PluginManager_Exec(1);
-	PluginManager_Destroy();
+	PluginManager_init("plugins");
+	PluginManager_print();
+	PluginManager_exec(0);
+	PluginManager_exec(1);
+	PluginManager_destroy();
 	return 0;
 }

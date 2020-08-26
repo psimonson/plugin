@@ -1,7 +1,7 @@
 # Simple makefile for gcc written by stext editor.
 CC=gcc
-CFLAGS=-std=c11 -W -O -g -I./libprs/include
-LDFLAGS=-ldl -L./libprs/build -lprs
+CFLAGS=-std=c11 -W -O -g -I./libprs/include -I./src
+LDFLAGS=-ldl -L./libprs/build -L. -lprs
 
 LIBPRS=$(shell find . -iname "libprs" -type d)
 BACKUPS=$(shell find . -iname "*.bak")
@@ -13,6 +13,10 @@ VERSION=1.0
 SOURCE=$(wildcard *.c)
 OBJECTS=$(SOURCE:%.c=%.c.o)
 TARGET=plugin
+
+SOURCE2=$(wildcard src/*.c)
+OBJECTS2=$(SOURCE2:%.c=%.c.o)
+TARGET2=libpluginmanager.so
 
 .PHONY: all install uninstall clean  distclean dist
 all: $(TARGET)
@@ -26,8 +30,14 @@ libprs:
 %.c.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(TARGET): libprs $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
+src/%.c.o: src/%.c
+	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
+
+$(TARGET2): libprs $(OBJECTS2)
+	$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS2) $(LDFLAGS)
+
+$(TARGET): libprs $(TARGET2) $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LDFLAGS) $(TARGET2)
 
 install: all
 	install $(TARGET) $(DESTDIR)/$(PREFIX)/bin
@@ -37,7 +47,7 @@ uninstall:
 
 clean:
 	cd plugins && $(MAKE) clean
-	rm -f $(OBJECTS) $(TARGET)
+	rm -f $(OBJECTS2) $(TARGET2) $(OBJECTS) $(TARGET)
 
 distclean: clean
 	cd plugins && $(MAKE) distclean
