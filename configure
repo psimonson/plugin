@@ -1,0 +1,21 @@
+#!/bin/sh
+
+file=
+
+replace() {
+	cp $file Makefile
+	cp plugins/plugin1/$file plugins/plugin1/Makefile
+	cp plugins/plugin2/$file plugins/plugin2/Makefile
+	echo "Done."
+}
+
+if [ "$1" = "linux" ]; then
+	file=Makefile.linux
+elif [ "$1" = "win32" ]; then
+	file=Makefile.win32
+else
+	echo "Usage: $0 [linux|win32]"
+	exit 1
+fi
+
+replace "$file"
