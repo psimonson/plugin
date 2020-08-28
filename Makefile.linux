@@ -37,7 +37,7 @@ $(TARGET2): libprs $(OBJECTS2)
 	$(CC) $(CFLAGS) -shared -o $@ $(OBJECTS2) $(LDFLAGS)
 
 $(TARGET): libprs $(TARGET2) $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LDFLAGS) $(TARGET2)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LDFLAGS) ./$(TARGET2)
 
 install: all
 	install $(TARGET) $(DESTDIR)/$(PREFIX)/bin
