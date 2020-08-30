@@ -122,6 +122,21 @@ static int PluginManager_discover(const char *dirname)
 
 /* --------------------------- Public Functions --------------------------- */
 
+/* Register all plugins at once.
+ */
+int PluginManager_register(void)
+{
+	size_t retval = 0, i;
+
+	for(i = 0; i < vector_size(plugin_manager); i++) {
+		int rc = PluginManager_exec(i);
+		if(rc < 0)
+			retval += 1;
+	}
+	if(retval > 0)
+		printf("%lu errors occured during plugin registration.\n", retval);
+	return !(retval == 0);
+}
 /* Initialize the plugin manager.
  */
 int PluginManager_init(const char *dir)

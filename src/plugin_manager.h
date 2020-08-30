@@ -7,6 +7,7 @@ extern "C" {
 
 typedef struct plugin_manager plugin_manager_t;
 
+int PluginManager_register(void);
 int PluginManager_init(const char *dirname);
 int PluginManager_exec(size_t id);
 void PluginManager_print(void);
