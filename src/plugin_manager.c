@@ -1,3 +1,11 @@
+/*
+ * Author: Philip R. Simonson
+ * Description: Plugin manager for adding extra functionality in applications.
+ * Date: Sep 8, 2020
+ *
+ ****************************************************************************
+ */
+
 #ifdef _WIN32
 #include <windows.h>
 #else

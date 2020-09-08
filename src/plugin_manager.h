@@ -1,3 +1,11 @@
+/*
+ * Author: Philip R. Simonson
+ * Description: Plugin manager header (see plugin_manager.c for more info).
+ * Date: Sep 8, 2020
+ *
+ ****************************************************************************
+ */
+
 #ifndef _PLUGIN_MANAGER_H_
 #define _PLUGIN_MANAGER_H_
 
