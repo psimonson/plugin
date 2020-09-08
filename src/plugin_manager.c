@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <dirent.h>
 #include <errno.h>
@@ -150,6 +151,28 @@ int PluginManager_exec(size_t i)
 	if(i < vector_size(plugin_manager))
 		return plugin_manager[i].func(&plugin_manager[i]);
 	return -1;
+}
+/* Search through all plugins and return index if found.
+ */
+size_t PluginManager_search(const char *name)
+{
+	char fname[80];
+	size_t i = 0;
+	bool found = false;
+
+	memset(fname, 0, sizeof(fname));
+	snprintf(fname, sizeof(fname), "%s%s", name,
+		strstr(name, ".so") != NULL ? "" : ".so");
+
+	for(i = 0; i < vector_size(plugin_manager); i++) {
+		if(!strcmp(fname, plugin_manager[i].name)) {
+			found = true;
+			break;
+		}
+	}
+	if(!found)
+		fprintf(stderr, "PluginManager: Plugin not found.\n");
+	return i;
 }
 /* Print all known plugins.
  */
