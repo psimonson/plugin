@@ -12,7 +12,7 @@ VERSION=1.0
 
 SOURCE=$(wildcard *.c)
 OBJECTS=$(SOURCE:%.c=%.c.o)
-TARGET=plugin
+TARGET=shell-example
 
 SOURCE2=$(wildcard src/*.c)
 OBJECTS2=$(SOURCE2:%.c=%.c.o)
