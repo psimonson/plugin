@@ -123,6 +123,9 @@ static int shell_exec(int argc, char **argv)
 		if(!strcmp(argv[0], g_commands[i].cmd))
 			return g_commands[i].func();
 
+	/* TODO: External module commands. */
+	int rc = PluginManager_register(argc, argv);
+
 #ifdef _WIN32
 	printf("Not yet implemented!\n");
 #else
@@ -142,7 +145,7 @@ static int shell_exec(int argc, char **argv)
 		wait(NULL);
 	}
 #endif
-	return 0;
+	return (rc > 0 ? 1 : (rc == 0 ? 0 : -1));
 }
 
 /* ------------------------ Public Functions --------------------------- */

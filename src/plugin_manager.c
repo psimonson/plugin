@@ -25,14 +25,20 @@
 
 /* ------------------ Constants, Structs, and Variables ------------------- */
 
+/* Callback for returning the type of a function. */
+typedef int (*callback)(void);
 /* Main callback function to execute in plugin. */
-typedef int (*callback)(plugin_manager_t *pm);
+typedef int (*main_callback)(plugin_manager_t *pm);
+/* Callback function to add additional commands. */
+typedef int (*cmd_callback)(plugin_manager_t *pm, int argc, char **argv);
 
 /* Definition of plugin manager structure. */
 struct plugin_manager {
 	char *name;
 	int id;
-	callback func;
+	int type;
+	main_callback func;
+	cmd_callback func2;
 	void *lib;
 } *plugin_manager = NULL;
 
@@ -40,11 +46,25 @@ struct plugin_manager {
 
 /* Create a simple plugin manager.
  */
-static int PluginManager_add(char *name, int id, callback func, void *lib)
+static int PluginManager_add(char *name, int id, int type,
+	void *func, void *lib)
 {
 	if(name == NULL || func == NULL || lib == NULL) return 1;
-	vector_push_back(plugin_manager,
-		((struct plugin_manager){name, id, func, lib}));
+	switch(type) {
+		case PM_COMMAND:
+			vector_push_back(plugin_manager,
+				((struct plugin_manager){name, id, type, NULL,
+				(cmd_callback)func, lib}));
+		break;
+		case PM_NORMAL:
+			vector_push_back(plugin_manager,
+				((struct plugin_manager){name, id, type, (main_callback)func,
+				NULL, lib}));
+		break;
+		default:
+			fprintf(stderr, "Error: Cannot add plugin [%s].\n", name);
+		break;
+	}
 	return 0;
 }
 /* Discover plugins in the plugins directory.
@@ -86,11 +106,15 @@ static int PluginManager_discover(const char *dirname)
 
 			lib = LoadLibrary(TEXT(buf));
 			if(lib != NULL) {
-				callback func = (callback)GetProcAddress(lib, "init_plugin");
+				callback fn = (callback)GetProcAddress(lib, "type_plugin");
+				if(fn == NULL)
+					fprintf(stderr, "Warning: Plugin type not defined.\n");
+				void *func = (void*)GetProcAddress(lib, "init_plugin");
 				if(func == NULL) {
-					fprintf(stderr, "Warning: Could not get main plugin function.\n");
+					fprintf(stderr, "Error: Could not get main plugin function.\n");
 				} else {
-					if(!PluginManager_add(strdup(p->d_name), i, func, lib))
+					int type = (int)(fn != NULL ? fn() : 0);
+					if(!PluginManager_add(strdup(p->d_name), i, type, func, lib))
 						i++;
 				}
 			} else {
@@ -109,12 +133,15 @@ static int PluginManager_discover(const char *dirname)
 			errno = 0;
 			lib = dlopen(buf, RTLD_LAZY);
 			if(lib != NULL) {
-				errno = 0;
-				callback func = dlsym(lib, "init_plugin");
+				callback fn = dlsym(lib, "type_plugin");
+				if(fn == NULL)
+					fprintf(stderr, "Warning: Plugin type not defined.\n");
+				void *func = (void*)dlsym(lib, "init_plugin");
 				if(func == NULL) {
 					fprintf(stderr, "Error: %s\n", strerror(errno));
 				} else {
-					if(!PluginManager_add(p->d_name, i, func, lib))
+					int type = (int)(fn != NULL ? fn() : 0);
+					if(!PluginManager_add(p->d_name, i, type, func, lib))
 						i++;
 				}
 			} else {
@@ -131,14 +158,20 @@ static int PluginManager_discover(const char *dirname)
 
 /* --------------------------- Public Functions --------------------------- */
 
+/* Declare plugin type for manager.
+ */
+PRS_EXPORT int plugin_type(int n)
+{
+	return (int)((n >= 0 && n < PM_TCOUNT) ? n : 0);
+}
 /* Register all plugins at once.
  */
-int PluginManager_register(void)
+int PluginManager_register(int argc, char **argv)
 {
 	size_t retval = 0, i;
 
 	for(i = 0; i < vector_size(plugin_manager); i++) {
-		int rc = PluginManager_exec(i);
+		int rc = PluginManager_exec(i, argc, argv);
 		if(rc < 0)
 			retval += 1;
 	}
@@ -154,10 +187,14 @@ int PluginManager_init(const char *dir)
 }
 /* Execute plugin main function.
  */
-int PluginManager_exec(size_t i)
+int PluginManager_exec(size_t i, int argc, char **argv)
 {
-	if(i < vector_size(plugin_manager))
-		return plugin_manager[i].func(&plugin_manager[i]);
+	if(i < vector_size(plugin_manager)) {
+		if(argv == NULL || argc < 0)
+			return plugin_manager[i].func(&plugin_manager[i]);
+		else
+			return plugin_manager[i].func2(&plugin_manager[i], argc, argv);
+	}
 	return -1;
 }
 /* Search through all plugins and return index if found.

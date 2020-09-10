@@ -9,19 +9,29 @@
 #ifndef _PLUGIN_MANAGER_H_
 #define _PLUGIN_MANAGER_H_
 
+#include "export.h"
+
+enum PM_type {
+	PM_NORMAL,
+	PM_COMMAND,
+	PM_TCOUNT
+};
+
+#define SET_PLUGIN_TYPE(N) type_plugin((N));
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct plugin_manager plugin_manager_t;
 
-int PluginManager_register(void);
-int PluginManager_init(const char *dirname);
-int PluginManager_exec(size_t id);
-size_t PluginManager_search(const char *name);
-void PluginManager_print(void);
-void PluginManager_destroy(void);
-const char *PluginManager_getName(plugin_manager_t *pm);
+PRS_EXPORT int PluginManager_register(int argc, char **argv);
+PRS_EXPORT int PluginManager_init(const char *dirname);
+PRS_EXPORT int PluginManager_exec(size_t id, int argc, char **argv);
+PRS_EXPORT size_t PluginManager_search(const char *name);
+PRS_EXPORT void PluginManager_print(void);
+PRS_EXPORT void PluginManager_destroy(void);
+PRS_EXPORT const char *PluginManager_getName(plugin_manager_t *pm);
 
 #ifdef __cplusplus
 }
