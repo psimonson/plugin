@@ -12,9 +12,30 @@ without the extension. If you find bugs please drop me an e-mail. Also do NOT
 spam my e-mail with miscellaneous crap, if it is NOT about a bug and pertains
 to this code I WILL NOT reply. I never reply to spam e-mail.
 
+### Build Instructions
+
+ - Install basic development tools for your distro of Linux, Mingw-w64 on Linux.
+ - This can be cross compiled for windows with mingw-w64 or built on windows with cygwin.
+ - Also install git as it's required.
+
+Then run these commands as follows:
+
+    cd plugin
+    ./configure <linux|win32>
+    make all
+
+Then you can run it like this:
+
+on Linux:
+    ./plugin (for Linux executable)
+    WINEARCH=win32 wine plugin.exe (for Windows executable, if configured with win32).
+
+on Windows:
+    plugin.exe
+
 ### Developer
 
-	- Philip R. Simonson <psimonson1988@gmail.com>
+  - Philip R. Simonson <psimonson1988@gmail.com>
 
 ### License
 
