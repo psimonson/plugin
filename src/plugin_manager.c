@@ -166,14 +166,22 @@ PRS_EXPORT int plugin_type(int n)
 }
 /* Register all plugins at once.
  */
-int PluginManager_register(int argc, char **argv)
+int PluginManager_register(int type, int argc, char **argv)
 {
 	size_t retval = 0, i;
 
 	for(i = 0; i < vector_size(plugin_manager); i++) {
-		int rc = PluginManager_exec(i, argc, argv);
+		int rc = 0;
+
+		if(plugin_manager[i].type == type) {
+			rc = PluginManager_exec(i, argc, argv);
+		} else {
+			fprintf(stderr, "Warning: Plugin [%s] could not be registered.\n",
+				plugin_manager[i].name);
+			rc++;
+		}
 		if(rc < 0)
-			retval += 1;
+			retval++;
 	}
 	if(retval > 0)
 		printf("%lu errors occured during plugin registration.\n", retval);
@@ -190,10 +198,18 @@ int PluginManager_init(const char *dir)
 int PluginManager_exec(size_t i, int argc, char **argv)
 {
 	if(i < vector_size(plugin_manager)) {
-		if(argv == NULL || argc < 0)
-			return plugin_manager[i].func(&plugin_manager[i]);
-		else
-			return plugin_manager[i].func2(&plugin_manager[i], argc, argv);
+		switch(plugin_manager[i].type) {
+			case PM_COMMAND:
+				return plugin_manager[i].func2(&plugin_manager[i], argc, argv);
+			break;
+			case PM_NORMAL:
+				return plugin_manager[i].func(&plugin_manager[i]);
+			break;
+			default:
+				fprintf(stderr, "Error: Plugin [%s] does NOT have a function.\n",
+					plugin_manager[i].name);
+			break;
+		}
 	}
 	return -1;
 }

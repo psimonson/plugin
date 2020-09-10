@@ -124,7 +124,7 @@ static int shell_exec(int argc, char **argv)
 			return g_commands[i].func();
 
 	/* TODO: External module commands. */
-	int rc = PluginManager_register(argc, argv);
+	int rc = PluginManager_register(PM_COMMAND, argc, argv);
 
 #ifdef _WIN32
 	printf("Not yet implemented!\n");

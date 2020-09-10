@@ -25,7 +25,7 @@ extern "C" {
 
 typedef struct plugin_manager plugin_manager_t;
 
-PRS_EXPORT int PluginManager_register(int argc, char **argv);
+PRS_EXPORT int PluginManager_register(int type, int argc, char **argv);
 PRS_EXPORT int PluginManager_init(const char *dirname);
 PRS_EXPORT int PluginManager_exec(size_t id, int argc, char **argv);
 PRS_EXPORT size_t PluginManager_search(const char *name);
