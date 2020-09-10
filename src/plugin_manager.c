@@ -158,12 +158,6 @@ static int PluginManager_discover(const char *dirname)
 
 /* --------------------------- Public Functions --------------------------- */
 
-/* Declare plugin type for manager.
- */
-PRS_EXPORT int plugin_type(int n)
-{
-	return (int)((n >= 0 && n < PM_TCOUNT) ? n : 0);
-}
 /* Register all plugins at once.
  */
 int PluginManager_register(int type, int argc, char **argv)

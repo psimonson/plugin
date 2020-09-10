@@ -17,7 +17,7 @@ enum PM_type {
 	PM_TCOUNT
 };
 
-#define SET_PLUGIN_TYPE(N) type_plugin((N));
+#define SET_PLUGIN_TYPE(N) int type_plugin(void) { return (N); }
 
 #ifdef __cplusplus
 extern "C" {
