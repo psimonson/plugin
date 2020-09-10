@@ -70,6 +70,8 @@ DEF_FNC(help)
 	printf("==========================================================\n");
 	for(int i = 0; i < g_cmd_total; i++)
 		printf("%s \t- %s\n", g_commands[i].cmd, g_commands[i].help);
+	(void)PluginManager_register(PM_COMMAND, -1, NULL);
+	printf("==========================================================\n");
 	return 0;
 }
 /* Exit command, quit this shell.
@@ -123,29 +125,29 @@ static int shell_exec(int argc, char **argv)
 		if(!strcmp(argv[0], g_commands[i].cmd))
 			return g_commands[i].func();
 
-	/* TODO: External module commands. */
-	int rc = PluginManager_register(PM_COMMAND, argc, argv);
+	int res = PluginManager_register(PM_COMMAND, argc, argv);
+	if(!res) return res;
 
 #ifdef _WIN32
-	printf("Not yet implemented!\n");
+		printf("Not yet implemented!\n");
 #else
-	int pid = fork();
-	if(pid < 0) {
-		fprintf(stderr, "Warning: Cannot fork process.\n");
-	} else if(pid == 0) {
-		int rc = execvp(argv[0], argv);
-		if(rc < 0) {
-			fprintf(stderr, "Error: Bad command - '%s'.\n", argv[0]);
-			return 1;
-		} else if(rc > 0) {
-			fprintf(stderr, "Error: Command failed.\n");
-			return 2;
+		int pid = fork();
+		if(pid < 0) {
+			fprintf(stderr, "Warning: Cannot fork process.\n");
+		} else if(pid == 0) {
+			int rc = execvp(argv[0], argv);
+			if(rc < 0) {
+				fprintf(stderr, "Error: Bad command - '%s'.\n", argv[0]);
+				return 1;
+			} else if(rc > 0) {
+				fprintf(stderr, "Error: Command failed.\n");
+				return 2;
+			}
+		} else {
+			wait(NULL);
 		}
-	} else {
-		wait(NULL);
-	}
 #endif
-	return (rc > 0 ? 1 : (rc == 0 ? 0 : -1));
+	return 0;
 }
 
 /* ------------------------ Public Functions --------------------------- */

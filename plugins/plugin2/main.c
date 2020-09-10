@@ -1,5 +1,8 @@
 #include <stdio.h>
+
 #include "plugin_manager.h"
+
+SET_PLUGIN_TYPE(PM_NORMAL);
 
 /* Get user input from the keyboard.
  */

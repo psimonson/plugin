@@ -158,28 +158,36 @@ static int PluginManager_discover(const char *dirname)
 
 /* --------------------------- Public Functions --------------------------- */
 
+/* Check for the normal plugins.
+ */
+int PluginManager_getCount(int type)
+{
+	int count = 0;
+
+	if(type < 0) type = 0;
+	if(type >= PM_TCOUNT) type = PM_NORMAL;
+
+	for(size_t i = 0; i < vector_size(plugin_manager); i++)
+		if(plugin_manager[i].type == type)
+			count++;
+	return count;
+}
 /* Register all plugins at once.
  */
 int PluginManager_register(int type, int argc, char **argv)
 {
-	size_t retval = 0, i;
-
-	for(i = 0; i < vector_size(plugin_manager); i++) {
-		int rc = 0;
-
+	for(size_t i = 0; i < vector_size(plugin_manager); i++) {
 		if(plugin_manager[i].type == type) {
-			rc = PluginManager_exec(i, argc, argv);
-		} else {
-			fprintf(stderr, "Warning: Plugin [%s] could not be registered.\n",
-				plugin_manager[i].name);
-			rc++;
+			int rc = PluginManager_exec(i, argc, argv);
+			if(rc < 0) {
+//			fprintf(stderr, "Warning: Plugin [%s] could not be registered.\n",
+//				plugin_manager[i].name);
+			} else {
+				return rc;
+			}
 		}
-		if(rc < 0)
-			retval++;
 	}
-	if(retval > 0)
-		printf("%lu errors occured during plugin registration.\n", retval);
-	return !(retval == 0);
+	return -1;
 }
 /* Initialize the plugin manager.
  */
