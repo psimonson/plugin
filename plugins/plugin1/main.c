@@ -1,3 +1,11 @@
+/*
+ * Author: Philip R. Simonson
+ * Description: Simple command extension plugin for my plugin manager.
+ * Date: Sep 9, 2020
+ *
+ ************************************************************************
+ */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -82,5 +90,6 @@ int init_plugin(plugin_manager_t *pm, int argc, char **argv)
 		for(int i = 0; i < g_cmd_total; i++)
 			printf("%s \t - %s\n", g_commands[i].cmd, g_commands[i].help);
 	}
-	return 1;
+	return 1; // Has to be equal to 1 otherwise causes problems
+						// in the main program.
 }

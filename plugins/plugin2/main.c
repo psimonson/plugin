@@ -1,3 +1,11 @@
+/*
+ * Author: Philip R. Simonson
+ * Description: Simple hello world plugin.
+ * Date: Sep 9, 2020
+ *
+ ************************************************************************
+ */
+
 #include <stdio.h>
 
 #include "plugin_manager.h"
@@ -26,5 +34,6 @@ int init_plugin(plugin_manager_t *pm)
 	(void)get_line(buf, sizeof(buf), stdin);
 	printf("Hello, %s.\n", buf);
 
-	return 0;
+	return 0; // Can return anything in a normal plugin, but
+						// in a command extension plugin has to be 1.
 }
