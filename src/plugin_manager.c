@@ -234,8 +234,13 @@ size_t PluginManager_search(const char *name)
 	bool found = false;
 
 	memset(fname, 0, sizeof(fname));
+#ifdef _WIN32
+	snprintf(fname, sizeof(fname), "%s%s", name,
+		strstr(name, ".dll") != NULL ? "" : ".dll");
+#else
 	snprintf(fname, sizeof(fname), "%s%s", name,
 		strstr(name, ".so") != NULL ? "" : ".so");
+#endif
 
 	for(i = 0; i < vector_size(plugin_manager); i++) {
 		if(!strcmp(fname, plugin_manager[i].name)) {
