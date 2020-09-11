@@ -74,7 +74,9 @@ DEF_CMD(modules) {
 		printf("Usage: %s\n", argv[0]);
 		return 0;
 	}
-	printf("Command not yet implemented!\n");
+	printf("*** NORMAL PLUGINS ***\n");
+	printf("======================\n");
+	PluginManager_list(PM_NORMAL);
 	return 0;
 }
 

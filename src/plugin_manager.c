@@ -158,6 +158,19 @@ static int PluginManager_discover(const char *dirname)
 
 /* --------------------------- Public Functions --------------------------- */
 
+/* List all plugins of given type.
+ */
+void PluginManager_list(int type)
+{
+	for(size_t i = 0; i < vector_size(plugin_manager); i++) {
+		if(plugin_manager[i].type == type) {
+			printf("Plugin [%s]: %s\n", plugin_manager[i].name,
+				plugin_manager[i].type == PM_COMMAND
+				? "Command extension plugin."
+				: "Normal plugin.");
+		}
+	}
+}
 /* Check for the normal plugins.
  */
 int PluginManager_getCount(int type)
@@ -179,10 +192,7 @@ int PluginManager_register(int type, int argc, char **argv)
 	for(size_t i = 0; i < vector_size(plugin_manager); i++) {
 		if(plugin_manager[i].type == type) {
 			int rc = PluginManager_exec(i, argc, argv);
-			if(rc < 0) {
-//			fprintf(stderr, "Warning: Plugin [%s] could not be registered.\n",
-//				plugin_manager[i].name);
-			} else {
+			if(rc >= 0) {
 				return rc;
 			}
 		}
@@ -229,7 +239,11 @@ size_t PluginManager_search(const char *name)
 
 	for(i = 0; i < vector_size(plugin_manager); i++) {
 		if(!strcmp(fname, plugin_manager[i].name)) {
-			found = true;
+			if(plugin_manager[i].type == PM_COMMAND) {
+				found = false;
+			} else {
+				found = true;
+			}
 			break;
 		}
 	}
