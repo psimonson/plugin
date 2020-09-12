@@ -1,7 +1,7 @@
 # Simple makefile for gcc written by stext editor.
 CC=gcc
 CFLAGS=-std=c11 -W -O -g -I./libprs/include -I./src
-LDFLAGS=-ldl -L./libprs/build -L. -lprs
+LDFLAGS=-ldl ./libprs/build/libprs_static.a
 
 LIBPRS=$(shell find . -iname "libprs" -type d)
 BACKUPS=$(shell find . -iname "*.bak")

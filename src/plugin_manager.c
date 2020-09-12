@@ -127,7 +127,7 @@ static int PluginManager_discover(const char *dirname)
 			// Build string for library path.
 			strncpy(buf, dname, sizeof(buf));
 			if(dname[len-1] != '/')
-				strncat(buf, "/", 1);
+				strncat(buf, "/", 2);
 			strncat(buf, p->d_name, strlen(p->d_name));
 
 			errno = 0;
