@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef _WIN32
@@ -138,11 +139,10 @@ static int shell_exec(int argc, char **argv)
 			int rc = execvp(argv[0], argv);
 			if(rc < 0) {
 				fprintf(stderr, "Error: Bad command - '%s'.\n", argv[0]);
-				return 1;
 			} else if(rc > 0) {
 				fprintf(stderr, "Error: Command failed.\n");
-				return 2;
 			}
+			exit(1);
 		} else {
 			wait(NULL);
 		}
