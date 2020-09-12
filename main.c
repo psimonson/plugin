@@ -139,10 +139,12 @@ static int shell_exec(int argc, char **argv)
 			int rc = execvp(argv[0], argv);
 			if(rc < 0) {
 				fprintf(stderr, "Error: Bad command - '%s'.\n", argv[0]);
+				exit(1);
 			} else if(rc > 0) {
 				fprintf(stderr, "Error: Command failed.\n");
+				exit(2);
 			}
-			exit(1);
+			exit(0);
 		} else {
 			wait(NULL);
 		}
